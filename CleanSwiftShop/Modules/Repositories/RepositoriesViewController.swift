@@ -1,0 +1,60 @@
+//
+//  RepositoriesViewController.swift
+//  CleanSwiftShop
+//
+//  Created by Nicklas on 27/03/2021.
+//
+
+import Foundation
+import UIKit
+
+class RepositoriesViewController: UIViewController, RepositoriesView {
+    
+    private var dataSource: RepositoryListItemDataSource!
+    
+    var viewDelegate: RepositoriesViewDelegate!
+    
+    @IBOutlet weak var tableView: UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        dataSource = RepositoryListItemDataSource(for: tableView)
+        
+        tableView.delegate = self
+        tableView.dataSource = dataSource
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(didChangeValueForRefreshControl), for: .valueChanged)
+        
+        tableView.refreshControl = refreshControl
+        
+        // Initialize in Presenter
+        viewDelegate.viewDidLoad()
+    }
+    
+    func setItems(_ items: [RepositoryListItem]) {
+        dataSource.items = items
+    }
+    
+    func setLoading(_ loading: Bool) {
+        if loading {
+            tableView.refreshControl?.beginRefreshing()
+        } else {
+            tableView.refreshControl?.endRefreshing()
+        }
+    }
+    
+    @objc func didChangeValueForRefreshControl(_ refreshControl: UIRefreshControl) {
+        viewDelegate.didRefresh()
+    }
+}
+
+extension RepositoriesViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = dataSource.items[indexPath.row]
+        viewDelegate.didSelect(item)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
