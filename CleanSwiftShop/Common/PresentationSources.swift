@@ -42,7 +42,7 @@ protocol Dismissable {
  Creates a presentation for a `UIViewController` (modal).
  */
 protocol ViewPresentationSource {
-    func presentation(of viewController: UIViewController) -> Presentable & Dismissable
+    func presentation(of viewController: UIViewController) -> (Presentable, Dismissable)
 }
 
 /**
@@ -66,7 +66,7 @@ struct Navigation {
  Creates a presentation for a `UIViewController` + `Navigation` for presentation in a navigation stack.
  */
 protocol NavigationPresentationSource {
-    func presentation(of viewController: UIViewController, navigation: Navigation) -> Presentable & Dismissable
+    func presentation(of viewController: UIViewController, navigation: Navigation) -> (Presentable, Dismissable)
 }
 
 struct Tab {
@@ -102,14 +102,10 @@ struct UIWindowPresentation: Presentable {
     
     let window: UIWindow
     
-    weak var viewController: UIViewController?
+    let viewController: UIViewController
     
     func present() {
-        if let viewController = viewController {
-            window.rootViewController = viewController
-        } else {
-            print("[WARN] Attempt to present a UIWindowPresentation multiple times. Create a new Presentation using a Presentation Source to present the view controller again.")
-        }
+        window.rootViewController = viewController
     }
 }
 
@@ -120,24 +116,27 @@ struct UIViewControllerPresentationSource: ViewPresentationSource {
     
     let presentingViewController: UIViewController
     
-    func presentation(of viewController: UIViewController) -> Dismissable & Presentable {
-        return UIViewControllerPresentation(presentingViewController: presentingViewController, viewController: viewController)
+    func presentation(of viewController: UIViewController) -> (Presentable, Dismissable) {
+        let presentable = UIViewControllerPresentation(presentingViewController: presentingViewController, viewController: viewController)
+        let dismissal = UIViewControllerDismissal(presentingViewController: presentingViewController)
+        return (presentable, dismissal)
     }
 }
 
-struct UIViewControllerPresentation: Presentable, Dismissable {
+struct UIViewControllerPresentation: Presentable {
     
     let presentingViewController: UIViewController
     
-    weak var viewController: UIViewController?
+    let viewController: UIViewController
     
     func present() {
-        if let viewController = viewController {
-            presentingViewController.present(viewController, animated: true)
-        } else {
-            print("[WARN] Attempt to present a UIViewControllerPresentation multiple times. Create a new Presentation using a Presentation Source to present the view controller again.")
-        }
+        presentingViewController.present(viewController, animated: true)
     }
+}
+
+struct UIViewControllerDismissal: Dismissable {
+    
+    let presentingViewController: UIViewController
     
     func dismiss() {
         presentingViewController.dismiss(animated: true)
@@ -151,8 +150,10 @@ struct UINavigationControllerPresentationSource: NavigationPresentationSource {
     
     let navigationController: UINavigationController
     
-    func presentation(of viewController: UIViewController, navigation: Navigation) -> Dismissable & Presentable {
-        return UINavigationControllerPresentation(navigationController: navigationController, navigation: navigation, viewController: viewController)
+    func presentation(of viewController: UIViewController, navigation: Navigation) -> (Presentable, Dismissable) {
+        let presentable = UINavigationControllerPresentation(navigationController: navigationController, navigation: navigation, viewController: viewController)
+        let dismissable = UINavigationControllerDismissal(navigationController: navigationController)
+        return (presentable, dismissable)
     }
 }
 
@@ -164,29 +165,30 @@ struct ConfiguredNavigationPresentationSource: ViewPresentationSource {
     let presentationSource: UINavigationControllerPresentationSource
     let navigation: Navigation
     
-    func presentation(of viewController: UIViewController) -> Dismissable & Presentable {
+    func presentation(of viewController: UIViewController) -> (Presentable, Dismissable) {
         return presentationSource.presentation(of: viewController, navigation: navigation)
     }
     
 }
 
-struct UINavigationControllerPresentation: Presentable, Dismissable {
+struct UINavigationControllerPresentation: Presentable {
     
     let navigationController: UINavigationController
     let navigation: Navigation
     
-    weak var viewController: UIViewController?
+    let viewController: UIViewController
     
     func present() {
-        if let viewController = viewController {
-            viewController.navigationItem.title = navigation.title
-            viewController.navigationItem.backButtonTitle = navigation.backButtonTitle
-            
-            navigationController.pushViewController(viewController, animated: true)
-        } else {
-            print("[WARN] Attempt to present a UINavigationControllerPresentation multiple times. Create a new Presentation using a Presentation Source to present the view controller again.")
-        }
+        viewController.navigationItem.title = navigation.title
+        viewController.navigationItem.backButtonTitle = navigation.backButtonTitle
+        
+        navigationController.pushViewController(viewController, animated: true)
     }
+}
+
+struct UINavigationControllerDismissal: Dismissable {
+    
+    let navigationController: UINavigationController
     
     func dismiss() {
         navigationController.popViewController(animated: true)
@@ -210,20 +212,16 @@ struct UITabBarPresentation: Presentable {
     let tabBarController: UITabBarController
     let tab: Tab
     
-    weak var viewController: UIViewController?
+    let viewController: UIViewController
     
     func present() {
-        if let viewController = viewController {
-            viewController.tabBarItem.title = tab.title
-            viewController.tabBarItem.image = tab.image
-            
-            var viewControllers = tabBarController.viewControllers ?? []
-            viewControllers.append(viewController)
-            
-            tabBarController.viewControllers = viewControllers
-        } else {
-            print("[WARN] Attempt to present a UITabBarPresentation multiple times. Create a new Presentation using a Presentation Source to present the view controller again.")
-        }
+        viewController.tabBarItem.title = tab.title
+        viewController.tabBarItem.image = tab.image
+        
+        var viewControllers = tabBarController.viewControllers ?? []
+        viewControllers.append(viewController)
+        
+        tabBarController.viewControllers = viewControllers
     }
 }
 

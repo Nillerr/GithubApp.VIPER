@@ -9,14 +9,14 @@ import Foundation
 
 class RepositoryRouter {
     
-    let presentation: Dismissable
+    let dismissable: Dismissable
     
-    init(presentation: Dismissable) {
-        self.presentation = presentation
+    init(dismissable: Dismissable) {
+        self.dismissable = dismissable
     }
     
     func dismiss() {
-        presentation.dismiss()
+        dismissable.dismiss()
     }
     
     deinit {

@@ -22,7 +22,7 @@ struct MainModule {
         let viewController = MainViewController()
         
         // View: Create presentation
-        let presentation = presentationSource.presentation(of: viewController)
+        let presentable = presentationSource.presentation(of: viewController)
         
         // View: TabBar Presentation Source
         let tabBarPresentationSource = UITabBarControllerPresentationSource(tabBarController: viewController)
@@ -42,7 +42,7 @@ struct MainModule {
         viewController.viewDelegate = presenter
         
         // View: Present Module
-        presentation.present()
+        presentable.present()
     }
     
 }

@@ -39,7 +39,7 @@ struct RepositoriesModule {
         let imageSystemName = presentationStyle == .modal ? "macwindow.on.rectangle" : "arrow.right.doc.on.clipboard"
         let image = UIImage(systemName: imageSystemName)
         let tab = Tab(title: title, image: image)
-        let presentation = presentationSource.presentation(of: moduleViewController, tab: tab)
+        let presentable = presentationSource.presentation(of: moduleViewController, tab: tab)
         
         // Interactor
         let interactor = RepositoriesInteractor(github: github)
@@ -64,12 +64,12 @@ struct RepositoriesModule {
         interactor.delegate = presenter
         
         // View: Present Module
-        presentation.present()
+        presentable.present()
     }
     
 }
 
-typealias RepositoryPresentationSource = (UIViewController, String) -> Presentable & Dismissable
+typealias RepositoryPresentationSource = (UIViewController, String) -> (Presentable, Dismissable)
 
 func modalPresentation(_ viewController: UIViewController) -> (UIViewController, RepositoryPresentationSource) {
     let presentationSource = UIViewControllerPresentationSource(presentingViewController: viewController)
