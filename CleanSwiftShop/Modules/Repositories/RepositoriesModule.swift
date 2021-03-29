@@ -16,16 +16,14 @@ enum RepositoriesPresentationStyle {
 
 /**
  - Modules are instantiated by other modules when they are presented.
+ - Modules will typically depend on UIKit
  - Modules are not meant to be testable.
  - Modules wire together the View, Interactor, Presenter, Entities & Router of a Module, and present a `UIViewController` in a given Presentation Source.
  */
 struct RepositoriesModule {
     
-    private let github: MoyaProvider<Github>
-    
-    init(github: MoyaProvider<Github>) {
-        self.github = github
-    }
+    let github: MoyaProvider<Github>
+    let repository: RepositoryModule
     
     func present(_ presentationStyle: RepositoriesPresentationStyle, title: String, in presentationSource: TabBarPresentationSource) {
         // View
@@ -35,21 +33,13 @@ struct RepositoriesModule {
             ? modalPresentation(viewController)
             : navigationPresentation(viewController, title: title)
         
-        // View: Create presentation
-        let imageSystemName = presentationStyle == .modal ? "macwindow.on.rectangle" : "arrow.right.doc.on.clipboard"
-        let image = UIImage(systemName: imageSystemName)
-        let tab = Tab(title: title, image: image)
-        let presentable = presentationSource.presentation(of: moduleViewController, tab: tab)
-        
         // Interactor
         let interactor = RepositoriesInteractor(github: github)
         
         // Router
-        let repositoryModule = RepositoryModule()
-        
         let router = RepositoriesRouter(
             presentationSource: modulePresentationSource,
-            repositoryModule: repositoryModule
+            repositoryModule: repository
         )
         
         // Presenter
@@ -64,28 +54,10 @@ struct RepositoriesModule {
         interactor.delegate = presenter
         
         // View: Present Module
-        presentable.present()
+        let imageSystemName = presentationStyle == .modal ? "macwindow.on.rectangle" : "arrow.right.doc.on.clipboard"
+        let image = UIImage(systemName: imageSystemName)
+        let tab = Tab(title: title, image: image)
+        presentationSource.addTab(moduleViewController, tab: tab)
     }
     
-}
-
-typealias RepositoryPresentationSource = (UIViewController, String) -> (Presentable, Dismissable)
-
-func modalPresentation(_ viewController: UIViewController) -> (UIViewController, RepositoryPresentationSource) {
-    let presentationSource = UIViewControllerPresentationSource(presentingViewController: viewController)
-    return (
-        viewController,
-        { vc, title in presentationSource.presentation(of: vc) }
-    )
-}
-
-func navigationPresentation(_ viewController: UIViewController, title: String) -> (UIViewController, RepositoryPresentationSource) {
-    viewController.navigationItem.title = title
-    
-    let navigationController = UINavigationController(rootViewController: viewController)
-    let presentationSource = UINavigationControllerPresentationSource(navigationController: navigationController)
-    return (
-        navigationController,
-        { vc, title in presentationSource.presentation(of: vc, navigation: Navigation(title: title)) }
-    )
 }

@@ -14,11 +14,8 @@ struct RepositoryModule {
         // View
         let viewController = RepositoryViewController()
         
-        // View: Create Presentation
-        let (presentable, dismissable) = presentationSource(viewController, repository.fullName)
-        
         // Router
-        let router = RepositoryRouter(dismissable: dismissable)
+        let router = RepositoryRouter(presentationSource: presentationSource)
         
         // Presenter
         let presenter = RepositoryPresenter(view: viewController, router: router, repository: repository)
@@ -27,7 +24,7 @@ struct RepositoryModule {
         viewController.viewDelegate = presenter
         
         // View: Present
-        presentable.present()
+        presentationSource.present(viewController, title: repository.fullName)
     }
     
 }

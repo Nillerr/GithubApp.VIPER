@@ -21,11 +21,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Dependencies
         let github = MoyaProvider<Github>()
         
-        //
+        // Modules
+        let repository = RepositoryModule()
+        let repositories = RepositoriesModule(github: github, repository: repository)
+        let main = MainModule(repositories: repositories)
+        
+        // Presentation
         let window = UIWindow(windowScene: windowScene)
         self.window = window
         
-        let main = MainModule(github: github)
         main.present(in: UIWindowPresentationSource(window: window))
         
         window.makeKeyAndVisible()

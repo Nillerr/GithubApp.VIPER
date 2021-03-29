@@ -13,7 +13,7 @@ class RepositoriesRouter: AnyRepositoriesRouter {
     
     let repositoryModule: RepositoryModule
     
-    init(presentationSource: @escaping RepositoryPresentationSource, repositoryModule: RepositoryModule) {
+    init(presentationSource: RepositoryPresentationSource, repositoryModule: RepositoryModule) {
         self.presentationSource = presentationSource
         self.repositoryModule = repositoryModule
     }

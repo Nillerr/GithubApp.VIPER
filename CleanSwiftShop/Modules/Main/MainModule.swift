@@ -11,29 +11,20 @@ import Moya
 
 struct MainModule {
     
-    private let github: MoyaProvider<Github>
-    
-    init(github: MoyaProvider<Github>) {
-        self.github = github
-    }
+    let repositories: RepositoriesModule
     
     func present(in presentationSource: WindowPresentationSource) {
         // View
         let viewController = MainViewController()
         
-        // View: Create presentation
-        let presentable = presentationSource.presentation(of: viewController)
-        
         // View: TabBar Presentation Source
         let tabBarPresentationSource = UITabBarControllerPresentationSource(tabBarController: viewController)
         
-        let repositoriesModule = RepositoriesModule(github: github)
-        
         // View: Tab: Repositories (Modal)
-        repositoriesModule.present(.modal, title: "Repos (Modal)", in: tabBarPresentationSource)
+        repositories.present(.modal, title: "Repos (Modal)", in: tabBarPresentationSource)
         
         // View: Tab: Repositories (Navigation)
-        repositoriesModule.present(.navigation, title: "Repos (Navigation)", in: tabBarPresentationSource)
+        repositories.present(.navigation, title: "Repos (Navigation)", in: tabBarPresentationSource)
         
         // Presenter
         let presenter = MainPresenter(view: viewController)
@@ -42,7 +33,7 @@ struct MainModule {
         viewController.viewDelegate = presenter
         
         // View: Present Module
-        presentable.present()
+        presentationSource.setRootViewController(viewController)
     }
     
 }

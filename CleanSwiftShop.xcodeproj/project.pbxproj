@@ -35,6 +35,7 @@
 		2AF799AE2610BB860082E0CD /* RepositoryPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF799AD2610BB860082E0CD /* RepositoryPresenter.swift */; };
 		2AF799B3261108F40082E0CD /* RepositoryListItemDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF799B2261108F40082E0CD /* RepositoryListItemDataSource.swift */; };
 		2AF799B826110BBB0082E0CD /* RepositoryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2AF799B726110BBB0082E0CD /* RepositoryViewController.xib */; };
+		2AF799C62611BAAD0082E0CD /* RepositoryPresentationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF799C52611BAAD0082E0CD /* RepositoryPresentationSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		2AF799AD2610BB860082E0CD /* RepositoryPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryPresenter.swift; sourceTree = "<group>"; };
 		2AF799B2261108F40082E0CD /* RepositoryListItemDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryListItemDataSource.swift; sourceTree = "<group>"; };
 		2AF799B726110BBB0082E0CD /* RepositoryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RepositoryViewController.xib; sourceTree = "<group>"; };
+		2AF799C52611BAAD0082E0CD /* RepositoryPresentationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryPresentationSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +212,7 @@
 				2AA2DF60260FB6D200D1C382 /* RepositoriesRouter.swift */,
 				2AF7998F2610B2610082E0CD /* RepositoriesModule.swift */,
 				2AF799B2261108F40082E0CD /* RepositoryListItemDataSource.swift */,
+				2AF799C52611BAAD0082E0CD /* RepositoryPresentationSource.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -379,6 +382,7 @@
 				2AA2DF3C260F99B200D1C382 /* Github.swift in Sources */,
 				2AF7999F2610B4C10082E0CD /* MainPresenter.swift in Sources */,
 				2AA2DF52260FB25500D1C382 /* RepositoryViewController.swift in Sources */,
+				2AF799C62611BAAD0082E0CD /* RepositoryPresentationSource.swift in Sources */,
 				2AA2DEA7260F459D00D1C382 /* SceneDelegate.swift in Sources */,
 				2AF799AE2610BB860082E0CD /* RepositoryPresenter.swift in Sources */,
 				2AF799A42610B5340082E0CD /* RepositoryRouter.swift in Sources */,
