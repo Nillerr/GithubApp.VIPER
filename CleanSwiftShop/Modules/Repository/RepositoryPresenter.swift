@@ -11,24 +11,19 @@ protocol RepositoryView: AnyObject {
     func setRepository(_ repository: RepositoryListItem)
 }
 
-protocol RepositoryViewDelegate {
-    func viewDidLoad()
+protocol RepositoryPresenterProtocol {
+    func repositoryDidLoad(_ repository: RepositoryListItem)
 }
 
-class RepositoryPresenter: RepositoryViewDelegate {
+class RepositoryPresenter: RepositoryPresenterProtocol {
     
     weak var view: RepositoryView!
     
-    let router: RepositoryRouter
-    let repository: RepositoryListItem
-    
-    init(view: RepositoryView, router: RepositoryRouter, repository: RepositoryListItem) {
+    init(view: RepositoryView) {
         self.view = view
-        self.router = router
-        self.repository = repository
     }
     
-    func viewDidLoad() {
+    func repositoryDidLoad(_ repository: RepositoryListItem) {
         view.setRepository(repository)
     }
     

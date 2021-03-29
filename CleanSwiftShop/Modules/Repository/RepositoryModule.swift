@@ -10,17 +10,18 @@ import UIKit
 
 struct RepositoryModule {
     
-    let presenterFactory: RepositoryPresenterFactory
+    let components: RepositoryModuleComponents
     
-    func present(_ repository: RepositoryListItem, in presentationSource: RepositoryPresentationSource) {
+    func present(_ repository: RepositoryListItem, in presentationSource: DismissablePresentationSource) {
         // View
         let viewController = RepositoryViewController()
         
         // Connections
-        viewController.viewDelegate = presenterFactory.presenter(for: repository, presenting: viewController, in: presentationSource)
+        viewController.interactor = components.interactor(for: repository, presenting: viewController)
+        viewController.router = components.router(in: presentationSource)
         
         // View: Present
-        presentationSource.present(viewController, title: repository.fullName)
+        presentationSource.present(viewController)
     }
     
 }

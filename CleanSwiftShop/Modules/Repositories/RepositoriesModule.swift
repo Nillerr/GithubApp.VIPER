@@ -22,24 +22,18 @@ enum RepositoriesPresentationStyle {
  */
 struct RepositoriesModule {
     
-    let presenterFactory: RepositoriesPresenterFactory
+    let components: RepositoriesModuleComponents
     
-    func present(_ presentationStyle: RepositoriesPresentationStyle, title: String, in presentationSource: TabBarPresentationSource) {
+    func present(_ presentationStyle: RepositoriesPresentationStyle, title: String, in presentationSource: PresentationSource) {
         // View
         let viewController = RepositoriesViewController()
         
-        let (moduleViewController, modulePresentationSource) = presentationStyle == .modal
-            ? modalPresentation(viewController)
-            : navigationPresentation(viewController, title: title)
+        let (moduleViewController, modulePresentationSource) = repositoriesPresentation(for: viewController, title: title, style: presentationStyle)
         
-        // Interactor + Presenter + Router
-        viewController.viewDelegate = presenterFactory.presenter(presenting: viewController, presentingModulesIn: modulePresentationSource)
+        viewController.interactor = components.interactor(presenting: viewController)
+        viewController.router = components.router(presentingModulesIn: modulePresentationSource)
         
-        // View: Present Module
-        let imageSystemName = presentationStyle == .modal ? "macwindow.on.rectangle" : "arrow.right.doc.on.clipboard"
-        let image = UIImage(systemName: imageSystemName)
-        let tab = Tab(title: title, image: image)
-        presentationSource.addTab(tab, for: moduleViewController)
+        presentationSource.present(moduleViewController)
     }
     
 }

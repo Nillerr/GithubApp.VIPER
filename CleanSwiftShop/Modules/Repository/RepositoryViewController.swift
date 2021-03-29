@@ -11,15 +11,14 @@ import WebKit
 
 class RepositoryViewController: UIViewController, RepositoryView {
     
-    var viewDelegate: RepositoryViewDelegate!
+    var interactor: RepositoryInteractorProtocol!
+    var router: RepositoryRouterProtocol!
     
     @IBOutlet weak var webView: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Initialize in Presenter
-        viewDelegate.viewDidLoad()
+        interactor.loadRepository()
     }
     
     func setRepository(_ repository: RepositoryListItem) {

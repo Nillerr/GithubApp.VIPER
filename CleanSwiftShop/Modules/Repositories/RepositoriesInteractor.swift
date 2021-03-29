@@ -8,33 +8,32 @@
 import Foundation
 import Moya
 
-protocol RepositoriesInteractorDelegate: AnyObject {
-    func repositoriesWillLoad()
-    func repositoriesDidLoad(_ repositories: [RepositoryListItem])
+protocol RepositoriesInteractorProtocol: AnyObject {
+    func refreshRepositories()
 }
 
-class RepositoriesInteractor {
+class RepositoriesInteractor: RepositoriesInteractorProtocol {
     
-    weak var delegate: RepositoriesInteractorDelegate?
+    let presenter: RepositoriesPresenterProtocol
+    let github: MoyaProvider<Github>
     
-    private let github: MoyaProvider<Github>
-    
-    private var _refreshRepositoriesCancellable: Cancellable?
-    
-    init(github: MoyaProvider<Github>) {
+    init(presenter: RepositoriesPresenterProtocol, github: MoyaProvider<Github>) {
+        self.presenter = presenter
         self.github = github
     }
+    
+    private var _refreshRepositoriesCancellable: Cancellable?
     
     func refreshRepositories() {
         _refreshRepositoriesCancellable?.cancel()
         
-        delegate?.repositoriesWillLoad()
+        presenter.repositoriesWillLoad()
         
-        _refreshRepositoriesCancellable = github.request(.repositories) { [weak delegate] result in
+        _refreshRepositoriesCancellable = github.request(.repositories) { [weak presenter] result in
             switch result {
             case .success(let response):
                 if let repositories = try? JSONDecoder().decode([RepositoryListItem].self, from: response.data) {
-                    delegate?.repositoriesDidLoad(repositories)
+                    presenter?.repositoriesDidLoad(repositories)
                 }
             case .failure(let error):
                 print("MoyaError: \(error)")

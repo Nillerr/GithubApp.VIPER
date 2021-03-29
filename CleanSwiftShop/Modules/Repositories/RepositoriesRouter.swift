@@ -6,19 +6,30 @@
 //
 
 import Foundation
+import UIKit
 
-class RepositoriesRouter {
+protocol RepositoriesRouterProtocol: AnyObject {
+    func navigateToRepository(_ repository: RepositoryListItem)
+    func dismiss()
+}
 
-    let modulePresentationSource: RepositoryPresentationSource
+class RepositoriesRouter: RepositoriesRouterProtocol {
+
+    let presentationSourceFactory: RepositoryPresentationSourceFactory
     let repositoryModule: RepositoryModule
     
-    init(modulePresentationSource: RepositoryPresentationSource, repositoryModule: RepositoryModule) {
-        self.modulePresentationSource = modulePresentationSource
+    init(modulePresentationSource: RepositoryPresentationSourceFactory, repositoryModule: RepositoryModule) {
+        self.presentationSourceFactory = modulePresentationSource
         self.repositoryModule = repositoryModule
     }
     
     func navigateToRepository(_ repository: RepositoryListItem) {
-        repositoryModule.present(repository, in: modulePresentationSource)
+        let presentationSource = presentationSourceFactory.presentationSource(repository, from: self)
+        repositoryModule.present(repository, in: presentationSource)
+    }
+    
+    @objc func dismiss() {
+        presentationSourceFactory.dismiss()
     }
     
 }

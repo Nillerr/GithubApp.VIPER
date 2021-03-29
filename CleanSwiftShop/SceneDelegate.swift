@@ -22,9 +22,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let github = MoyaProvider<Github>()
         
         // Modules
-        let repository = RepositoryModule(presenterFactory: RepositoryPresenterFactory())
-        let repositories = RepositoriesModule(presenterFactory: RepositoriesPresenterFactory(github: github, repository: repository))
-        let main = MainModule(presenterFactory: MainPresenterFactory(repositories: repositories))
+        let repository = RepositoryModule(components: RepositoryModuleComponents())
+        let repositories = RepositoriesModule(components: RepositoriesModuleComponents(github: github, repository: repository))
+        let main = MainModule(repositories: repositories)
         
         // Presentation
         let window = UIWindow(windowScene: windowScene)

@@ -8,97 +8,46 @@
 import Foundation
 import UIKit
 
-/**
- Presents a `UIViewController` as the root of a window
- */
-protocol WindowPresentationSource {
-    func setRootViewController(_ viewController: UIViewController)
+protocol Presentable {
+    func present()
 }
 
-/**
- Dismisses a presented view controller
- */
-protocol ModalPresentationDismisser {
-    func dismiss()
-}
-
-/**
- Presents a `UIViewController` as a modal
- */
-protocol ModalPresentationPresenter {
+protocol PresentationSource {
     func present(_ viewController: UIViewController)
 }
 
-protocol ModalPresentationSource: ModalPresentationPresenter, ModalPresentationDismisser {
+protocol DismissableSource {
+    func dismiss()
+}
+
+protocol DismissablePresentationSource: PresentationSource, DismissableSource {
 }
 
 /**
- Dismisses the top of a navigation stack
+ Presents a `UIViewController` as a tab of a `UITabBarController`
  */
-protocol NavigationPresentationDismisser {
-    func pop()
-}
-
-/**
- Presents a `UIViewController` + `Navigation` in a navigation stack
- */
-protocol NavigationPresentationPresenter {
-    func push(_ viewController: UIViewController, navigation: Navigation)
-}
-
-protocol NavigationPresentationSource: NavigationPresentationPresenter, NavigationPresentationDismisser {
-}
-
-struct Navigation {
-    let title: String?
-    let backButtonTitle: String?
+struct UITabPresentationSource: PresentationSource {
     
-    init(title: String? = nil, backButtonTitle: String? = nil) {
-        self.title = title
-        self.backButtonTitle = backButtonTitle
-    }
-}
-
-protocol TabBarPresentationDismisser {
-    func removeTab(for viewController: UIViewController)
-}
-
-protocol TabBarPresentationPresenter {
-    func addTab(_ tab: Tab, for viewController: UIViewController)
-}
-
-/**
- Presents a `UIViewController` + `Tab` as a tab in a tab bar
- */
-protocol TabBarPresentationSource: TabBarPresentationPresenter, TabBarPresentationDismisser {
-}
-
-struct Tab {
+    let tabBarController: UITabBarController
     let title: String?
     let image: UIImage?
     
-    init(title: String? = nil, image: UIImage? = nil) {
-        self.title = title
-        self.image = image
+    func present(_ viewController: UIViewController) {
+        viewController.tabBarItem.title = title
+        viewController.tabBarItem.image = image
+        
+        var viewControllers = tabBarController.viewControllers ?? []
+        viewControllers.append(viewController)
+        
+        tabBarController.viewControllers = viewControllers
     }
+    
 }
 
 /**
- Presents a `UIViewController` by setting it as the `rootViewController` of a `UIWindow`.
+ Presents a `UIViewController` as a modal of another `UIViewController`
  */
-struct UIWindowPresentationSource: WindowPresentationSource {
-    
-    let window: UIWindow
-    
-    func setRootViewController(_ viewController: UIViewController) {
-        window.rootViewController = viewController
-    }
-}
-
-/**
- Presents a `UIViewController` as a modal in a presenting `UIViewController`.
- */
-struct UIViewControllerPresentationSource: ModalPresentationSource {
+struct UIModalPresentationSource: DismissablePresentationSource {
     
     let presentingViewController: UIViewController
     
@@ -109,47 +58,69 @@ struct UIViewControllerPresentationSource: ModalPresentationSource {
     func dismiss() {
         presentingViewController.dismiss(animated: true)
     }
+    
 }
 
 /**
- Pushes a `UIViewController` to a `UINavigationController`.
+ Presents a `UIViewController` as the root of a `UIWindow`
  */
-struct UINavigationControllerPresentationSource: NavigationPresentationSource {
+struct UIWindowPresentationSource: PresentationSource {
     
+    let window: UIWindow
+    
+    func present(_ viewController: UIViewController) {
+        window.rootViewController = viewController
+    }
+    
+}
+
+@objc class BarButton: NSObject {
+    
+    let title: String?
+    let action: (() -> Void)?
+    
+    init(title: String? = nil, action: (() -> Void)? = nil) {
+        self.title = title
+        self.action = action
+    }
+    
+    @objc internal func invokeAction() {
+        action?()
+    }
+    
+    deinit {
+        print("[BarButton] deinit")
+    }
+}
+
+/**
+ Presents a `UIViewController` + `Navigation` in a navigation stack
+ */
+struct UINavigationPresentationSource: DismissablePresentationSource {
+   
     let navigationController: UINavigationController
+    let title: String?
+    let rightBarButton: BarButton?
     
-    func push(_ viewController: UIViewController, navigation: Navigation) {
-        viewController.navigationItem.title = navigation.title
-        viewController.navigationItem.backButtonTitle = navigation.backButtonTitle
+    func present(_ viewController: UIViewController) {
+        viewController.navigationItem.title = title
+        
+        if let rightBarButton = rightBarButton {
+            let button = UIBarButtonItem(
+                title: rightBarButton.title,
+                style: .plain,
+                target: rightBarButton,
+                action: #selector(rightBarButton.invokeAction)
+            )
+            
+            viewController.navigationItem.rightBarButtonItem = button
+        }
         
         navigationController.pushViewController(viewController, animated: true)
     }
     
-    func pop() {
+    func dismiss() {
         navigationController.popViewController(animated: true)
-    }
-}
-
-/**
- Adds a `UIViewController` as a tab to a `UITabBarController`.
- */
-struct UITabBarControllerPresentationSource: TabBarPresentationSource {
-    
-    let tabBarController: UITabBarController
-    
-    func addTab(_ tab: Tab, for viewController: UIViewController) {
-        viewController.tabBarItem.title = tab.title
-        viewController.tabBarItem.image = tab.image
-        
-        var viewControllers = tabBarController.viewControllers ?? []
-        viewControllers.append(viewController)
-        
-        tabBarController.viewControllers = viewControllers
-    }
-    
-    func removeTab(for viewController: UIViewController) {
-        let viewControllers = tabBarController.viewControllers ?? []
-        tabBarController.viewControllers = viewControllers.filter { $0 != viewController }
     }
     
 }

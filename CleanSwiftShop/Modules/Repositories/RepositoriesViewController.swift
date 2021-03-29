@@ -12,7 +12,8 @@ class RepositoriesViewController: UIViewController, RepositoriesView {
     
     private var dataSource: RepositoryListItemDataSource!
     
-    var viewDelegate: RepositoriesViewDelegate!
+    var interactor: RepositoriesInteractorProtocol!
+    var router: RepositoriesRouterProtocol!
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -30,7 +31,7 @@ class RepositoriesViewController: UIViewController, RepositoriesView {
         tableView.refreshControl = refreshControl
         
         // Initialize in Presenter
-        viewDelegate.viewDidLoad()
+        interactor.refreshRepositories()
     }
     
     func setItems(_ items: [RepositoryListItem]) {
@@ -46,14 +47,14 @@ class RepositoriesViewController: UIViewController, RepositoriesView {
     }
     
     @objc func didChangeValueForRefreshControl(_ refreshControl: UIRefreshControl) {
-        viewDelegate.didRefresh()
+        interactor.refreshRepositories()
     }
 }
 
 extension RepositoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = dataSource.items[indexPath.row]
-        viewDelegate.didSelect(item)
+        router.navigateToRepository(item)
         
         tableView.deselectRow(at: indexPath, animated: true)
     }

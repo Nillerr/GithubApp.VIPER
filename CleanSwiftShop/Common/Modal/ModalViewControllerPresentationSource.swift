@@ -8,15 +8,22 @@
 import Foundation
 import UIKit
 
-extension ModalPresentationSource {
+struct ModalViewControllerPresentationSource: DismissablePresentationSource {
     
-    func present(_ viewController: UIViewController, title: String) {
+    let presentingViewController: UIViewController
+    let title: String
+    
+    func present(_ viewController: UIViewController) {
         let modalViewController = ModalViewController()
         modalViewController.contentViewController = viewController
         modalViewController.title = title
         modalViewController.onClose = dismiss
         
-        present(modalViewController)
+        presentingViewController.present(modalViewController, animated: true)
+    }
+    
+    func dismiss() {
+        presentingViewController.dismiss(animated: true)
     }
     
 }

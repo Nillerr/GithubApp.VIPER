@@ -7,11 +7,15 @@
 
 import Foundation
 
-class RepositoryRouter {
+protocol RepositoryRouterProtocol: AnyObject {
+    func dismiss()
+}
+
+class RepositoryRouter: RepositoryRouterProtocol {
     
-    let presentingSource: RepositoryPresentationDismisser
+    let presentingSource: DismissableSource
     
-    init(presentingSource: RepositoryPresentationDismisser) {
+    init(presentingSource: DismissableSource) {
         self.presentingSource = presentingSource
     }
     

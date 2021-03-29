@@ -8,54 +8,58 @@
 import Foundation
 import UIKit
 
-protocol RepositoryPresentationPresenter {
-    func present(_ viewController: UIViewController, title: String)
-}
-
-protocol RepositoryPresentationDismisser {
+protocol RepositoryPresentationSourceFactory {
+    func presentationSource(_ repository: RepositoryListItem, from router: RepositoriesRouterProtocol) -> DismissablePresentationSource
     func dismiss()
 }
 
-protocol RepositoryPresentationSource: RepositoryPresentationPresenter, RepositoryPresentationDismisser {
-}
-
-/**
- Provides type erasure for an underlying presentation source, enabling easy swapping of `ModalPresentationSource` and `NavigationPresentationSource`. This type exists merely to prove a concept.
- */
-struct AnyRepositoryPresentationSource: RepositoryPresentationSource {
+struct ModalRepositoriesPresentationSourceFactory: RepositoryPresentationSourceFactory {
     
-    private let _present: (UIViewController, String) -> Void
-    private let _dismiss: () -> Void
+    let presentingViewController: UIViewController
     
-    init<S : ModalPresentationSource>(_ presentationSource: S) {
-        self._present = presentationSource.present(_:title:)
-        self._dismiss = presentationSource.dismiss
-    }
-    
-    init<S : NavigationPresentationSource>(_ presentationSource: S) {
-        self._present = { viewController, title in presentationSource.push(viewController, navigation: Navigation(title: title)) }
-        self._dismiss = presentationSource.pop
-    }
-    
-    func present(_ viewController: UIViewController, title: String) {
-        _present(viewController, title)
+    func presentationSource(_ repository: RepositoryListItem, from router: RepositoriesRouterProtocol) -> DismissablePresentationSource {
+        return ModalViewControllerPresentationSource(presentingViewController: presentingViewController, title: repository.fullName)
     }
     
     func dismiss() {
-        _dismiss()
+        presentingViewController.dismiss(animated: true)
     }
 }
 
-func modalPresentation(_ viewController: UIViewController) -> (UIViewController, RepositoryPresentationSource) {
-    let presentationSource = UIViewControllerPresentationSource(presentingViewController: viewController)
-    return (viewController, AnyRepositoryPresentationSource(presentationSource))
+struct UINavigationRepositoriesPresentationSourceFactory: RepositoryPresentationSourceFactory {
+    
+    let navigationController: UINavigationController
+    
+    func presentationSource(_ repository: RepositoryListItem, from router: RepositoriesRouterProtocol) -> DismissablePresentationSource {
+        let rightBarButton = BarButton(title: "Close", action: router.dismiss)
+        return UINavigationPresentationSource(navigationController: navigationController, title: repository.fullName, rightBarButton: rightBarButton)
+    }
+    
+    func dismiss() {
+        navigationController.popViewController(animated: true)
+    }
+    
 }
 
-func navigationPresentation(_ viewController: UIViewController, title: String) -> (UIViewController, RepositoryPresentationSource) {
+func repositoriesPresentation(for viewController: UIViewController, title: String, style: RepositoriesPresentationStyle) -> (UIViewController, RepositoryPresentationSourceFactory) {
+    switch style {
+    case .modal:
+        return modalPresentation(viewController)
+    case .navigation:
+        return navigationPresentation(viewController, title: title)
+    }
+}
+
+func modalPresentation(_ viewController: UIViewController) -> (UIViewController, RepositoryPresentationSourceFactory) {
+    let presentationSource = ModalRepositoriesPresentationSourceFactory(presentingViewController: viewController)
+    return (viewController, presentationSource)
+}
+
+func navigationPresentation(_ viewController: UIViewController, title: String) -> (UIViewController, RepositoryPresentationSourceFactory) {
     viewController.navigationItem.title = title
     
     let navigationController = UINavigationController(rootViewController: viewController)
-    let presentationSource = UINavigationControllerPresentationSource(navigationController: navigationController)
+    let presentationSource = UINavigationRepositoriesPresentationSourceFactory(navigationController: navigationController)
     
-    return (navigationController, AnyRepositoryPresentationSource(presentationSource))
+    return (navigationController, presentationSource)
 }
