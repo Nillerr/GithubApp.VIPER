@@ -13,7 +13,7 @@ protocol RepositoriesInteractorDelegate: AnyObject {
     func repositoriesDidLoad(_ repositories: [RepositoryListItem])
 }
 
-class RepositoriesInteractor: AnyRepositoriesInteractor {
+class RepositoriesInteractor {
     
     weak var delegate: RepositoriesInteractorDelegate?
     

@@ -17,7 +17,10 @@ class MainPresenter: MainViewDelegate {
     
     weak var view: MainView!
     
-    init(view: MainView) {
+    let router: MainRouter
+    
+    init(view: MainView, router: MainRouter) {
         self.view = view
+        self.router = router
     }
 }

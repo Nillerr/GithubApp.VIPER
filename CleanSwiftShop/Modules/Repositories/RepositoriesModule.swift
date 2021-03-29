@@ -22,8 +22,7 @@ enum RepositoriesPresentationStyle {
  */
 struct RepositoriesModule {
     
-    let github: MoyaProvider<Github>
-    let repository: RepositoryModule
+    let presenterFactory: RepositoriesPresenterFactory
     
     func present(_ presentationStyle: RepositoriesPresentationStyle, title: String, in presentationSource: TabBarPresentationSource) {
         // View
@@ -33,25 +32,8 @@ struct RepositoriesModule {
             ? modalPresentation(viewController)
             : navigationPresentation(viewController, title: title)
         
-        // Interactor
-        let interactor = RepositoriesInteractor(github: github)
-        
-        // Router
-        let router = RepositoriesRouter(
-            presentationSource: modulePresentationSource,
-            repositoryModule: repository
-        )
-        
-        // Presenter
-        let presenter = RepositoriesPresenter(
-            view: viewController,
-            interactor: interactor,
-            router: router
-        )
-        
-        // Connections
-        viewController.viewDelegate = presenter
-        interactor.delegate = presenter
+        // Interactor + Presenter + Router
+        viewController.viewDelegate = presenterFactory.presenter(presenting: viewController, presentingModulesIn: modulePresentationSource)
         
         // View: Present Module
         let imageSystemName = presentationStyle == .modal ? "macwindow.on.rectangle" : "arrow.right.doc.on.clipboard"

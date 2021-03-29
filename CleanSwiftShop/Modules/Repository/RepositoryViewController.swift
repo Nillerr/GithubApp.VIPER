@@ -7,13 +7,13 @@
 
 import Foundation
 import UIKit
+import WebKit
 
 class RepositoryViewController: UIViewController, RepositoryView {
     
     var viewDelegate: RepositoryViewDelegate!
     
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var closeButton: UIButton!
+    @IBOutlet weak var webView: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,11 +23,8 @@ class RepositoryViewController: UIViewController, RepositoryView {
     }
     
     func setRepository(_ repository: RepositoryListItem) {
-        titleLabel.text = repository.fullName
-    }
-    
-    @IBAction func didTouchUpInsideClose(_ sender: UIButton) {
-        viewDelegate.didClose()
+        let request = URLRequest(url: URL(string: repository.htmlUrl)!)
+        webView.load(request)
     }
     
     deinit {

@@ -11,26 +11,17 @@ import Moya
 
 struct MainModule {
     
-    let repositories: RepositoriesModule
+    let presenterFactory: MainPresenterFactory
     
     func present(in presentationSource: WindowPresentationSource) {
         // View
         let viewController = MainViewController()
         
         // View: TabBar Presentation Source
-        let tabBarPresentationSource = UITabBarControllerPresentationSource(tabBarController: viewController)
-        
-        // View: Tab: Repositories (Modal)
-        repositories.present(.modal, title: "Repos (Modal)", in: tabBarPresentationSource)
-        
-        // View: Tab: Repositories (Navigation)
-        repositories.present(.navigation, title: "Repos (Navigation)", in: tabBarPresentationSource)
-        
-        // Presenter
-        let presenter = MainPresenter(view: viewController)
+        let modulePresentationSource = UITabBarControllerPresentationSource(tabBarController: viewController)
         
         // Connections
-        viewController.viewDelegate = presenter
+        viewController.viewDelegate = presenterFactory.presenter(presenting: viewController, presentingModulesIn: modulePresentationSource)
         
         // View: Present Module
         presentationSource.setRootViewController(viewController)

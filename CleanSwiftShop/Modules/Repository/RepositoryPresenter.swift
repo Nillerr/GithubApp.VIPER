@@ -13,7 +13,6 @@ protocol RepositoryView: AnyObject {
 
 protocol RepositoryViewDelegate {
     func viewDidLoad()
-    func didClose()
 }
 
 class RepositoryPresenter: RepositoryViewDelegate {
@@ -31,10 +30,6 @@ class RepositoryPresenter: RepositoryViewDelegate {
     
     func viewDidLoad() {
         view.setRepository(repository)
-    }
-    
-    func didClose() {
-        self.router.dismiss()
     }
     
     deinit {

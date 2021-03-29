@@ -9,14 +9,6 @@ import Foundation
 import UIKit
 
 /**
- Presents a `UIViewController` as a modal
- */
-protocol ModalPresentationSource {
-    func present(_ viewController: UIViewController)
-    func dismiss()
-}
-
-/**
  Presents a `UIViewController` as the root of a window
  */
 protocol WindowPresentationSource {
@@ -24,11 +16,37 @@ protocol WindowPresentationSource {
 }
 
 /**
+ Dismisses a presented view controller
+ */
+protocol ModalPresentationDismisser {
+    func dismiss()
+}
+
+/**
+ Presents a `UIViewController` as a modal
+ */
+protocol ModalPresentationPresenter {
+    func present(_ viewController: UIViewController)
+}
+
+protocol ModalPresentationSource: ModalPresentationPresenter, ModalPresentationDismisser {
+}
+
+/**
+ Dismisses the top of a navigation stack
+ */
+protocol NavigationPresentationDismisser {
+    func pop()
+}
+
+/**
  Presents a `UIViewController` + `Navigation` in a navigation stack
  */
-protocol NavigationPresentationSource {
+protocol NavigationPresentationPresenter {
     func push(_ viewController: UIViewController, navigation: Navigation)
-    func pop()
+}
+
+protocol NavigationPresentationSource: NavigationPresentationPresenter, NavigationPresentationDismisser {
 }
 
 struct Navigation {

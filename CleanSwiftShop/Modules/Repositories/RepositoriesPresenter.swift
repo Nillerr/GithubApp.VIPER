@@ -7,7 +7,6 @@
 
 import Foundation
 
-// Module Stuff
 protocol RepositoriesView: AnyObject {
     func setItems(_ items: [RepositoryListItem])
     func setLoading(_ loading: Bool)
@@ -19,22 +18,14 @@ protocol RepositoriesViewDelegate {
     func didRefresh()
 }
 
-protocol AnyRepositoriesInteractor {
-    func refreshRepositories()
-}
-
-protocol AnyRepositoriesRouter {
-    func navigateToRepository(_ repository: RepositoryListItem)
-}
-
 class RepositoriesPresenter {
     
     weak var view: RepositoriesView?
     
-    let interactor: AnyRepositoriesInteractor
-    let router: AnyRepositoriesRouter
+    let interactor: RepositoriesInteractor
+    let router: RepositoriesRouter
     
-    init(view: RepositoriesView, interactor: AnyRepositoriesInteractor, router: AnyRepositoriesRouter) {
+    init(view: RepositoriesView, interactor: RepositoriesInteractor, router: RepositoriesRouter) {
         self.view = view
         self.interactor = interactor
         self.router = router

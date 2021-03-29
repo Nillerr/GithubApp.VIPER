@@ -53,11 +53,13 @@ struct RepositoryListItem: Codable {
     let id: Int
     let name: String
     let fullName: String
+    let htmlUrl: String
     
     enum CodingKeys: String, CodingKey {
         case id = "id"
         case name = "name"
         case fullName = "full_name"
+        case htmlUrl = "html_url"
     }
 }
 

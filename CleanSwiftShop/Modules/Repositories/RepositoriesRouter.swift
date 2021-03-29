@@ -7,19 +7,18 @@
 
 import Foundation
 
-class RepositoriesRouter: AnyRepositoriesRouter {
+class RepositoriesRouter {
 
-    let presentationSource: RepositoryPresentationSource
-    
+    let modulePresentationSource: RepositoryPresentationSource
     let repositoryModule: RepositoryModule
     
-    init(presentationSource: RepositoryPresentationSource, repositoryModule: RepositoryModule) {
-        self.presentationSource = presentationSource
+    init(modulePresentationSource: RepositoryPresentationSource, repositoryModule: RepositoryModule) {
+        self.modulePresentationSource = modulePresentationSource
         self.repositoryModule = repositoryModule
     }
     
     func navigateToRepository(_ repository: RepositoryListItem) {
-        repositoryModule.present(repository, in: presentationSource)
+        repositoryModule.present(repository, in: modulePresentationSource)
     }
     
 }

@@ -10,9 +10,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RepositoryViewController" customModule="CleanSwiftShop" customModuleProvider="target">
             <connections>
-                <outlet property="closeButton" destination="34l-cZ-CPS" id="lb5-Y2-4Wd"/>
-                <outlet property="titleLabel" destination="yuu-J8-Co6" id="u6L-sm-ARO"/>
                 <outlet property="view" destination="iN0-l3-epB" id="V5P-tG-VyB"/>
+                <outlet property="webView" destination="CFR-Jh-miF" id="Yca-r6-CrF"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -20,33 +19,23 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$fullName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yuu-J8-Co6">
-                    <rect key="frame" x="20" y="64" width="308" height="41"/>
-                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="close" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="34l-cZ-CPS">
-                    <rect key="frame" x="348" y="64" width="40" height="40"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="40" id="Ajd-ZV-TK7"/>
-                        <constraint firstAttribute="width" constant="40" id="Jqg-sp-YEf"/>
-                    </constraints>
-                    <connections>
-                        <action selector="didTouchUpInsideClose:" destination="-1" eventType="touchUpInside" id="wGt-6o-4ab"/>
-                    </connections>
-                </button>
+                <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CFR-Jh-miF">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                    <wkWebViewConfiguration key="configuration">
+                        <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                        <wkPreferences key="preferences"/>
+                    </wkWebViewConfiguration>
+                </wkWebView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="34l-cZ-CPS" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="20" id="MSc-lf-ufs"/>
-                <constraint firstItem="34l-cZ-CPS" firstAttribute="leading" secondItem="yuu-J8-Co6" secondAttribute="trailing" constant="20" id="lhr-9e-C2Y"/>
-                <constraint firstItem="yuu-J8-Co6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="seV-Ac-oSy"/>
-                <constraint firstItem="yuu-J8-Co6" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="20" id="tkh-Hj-BJM"/>
-                <constraint firstItem="34l-cZ-CPS" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="348" id="wK0-hF-VDU"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="CFR-Jh-miF" secondAttribute="trailing" id="ALw-Yv-wgS"/>
+                <constraint firstItem="CFR-Jh-miF" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="Js9-Tr-uID"/>
+                <constraint firstItem="CFR-Jh-miF" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="mU3-2W-nXb"/>
+                <constraint firstItem="CFR-Jh-miF" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qMU-DR-E8r"/>
             </constraints>
-            <point key="canvasLocation" x="103" y="70"/>
+            <point key="canvasLocation" x="102.89855072463769" y="69.642857142857139"/>
         </view>
     </objects>
     <resources>

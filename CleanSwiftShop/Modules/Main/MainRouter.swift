@@ -8,4 +8,13 @@
 import Foundation
 
 struct MainRouter {
+    
+    init(modulePresentationSource: TabBarPresentationSource, repositories: RepositoriesModule) {
+        // View: Tab: Repositories (Modal)
+        repositories.present(.modal, title: "Repos (Modal)", in: modulePresentationSource)
+        
+        // View: Tab: Repositories (Navigation)
+        repositories.present(.navigation, title: "Repos (Navigation)", in: modulePresentationSource)
+    }
+    
 }
