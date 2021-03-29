@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol RepositoryRouterProtocol: AnyObject {
     func dismiss()
@@ -13,14 +14,18 @@ protocol RepositoryRouterProtocol: AnyObject {
 
 class RepositoryRouter: RepositoryRouterProtocol {
     
-    let presentingSource: DismissableSource
+    private let _dismiss: () -> Void
     
-    init(presentingSource: DismissableSource) {
-        self.presentingSource = presentingSource
+    init(navigationController: UINavigationController) {
+        self._dismiss = { navigationController.popViewController(animated: true) }
+    }
+    
+    init(viewController: UIViewController) {
+        self._dismiss = { viewController.dismiss(animated: true) }
     }
     
     func dismiss() {
-        presentingSource.dismiss()
+        _dismiss()
     }
     
     deinit {

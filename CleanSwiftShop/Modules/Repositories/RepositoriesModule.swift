@@ -22,18 +22,38 @@ enum RepositoriesPresentationStyle {
  */
 struct RepositoriesModule {
     
-    let components: RepositoriesModuleComponents
+    let github: MoyaProvider<Github>
+    let repository: RepositoryModule
     
-    func present(_ presentationStyle: RepositoriesPresentationStyle, title: String, in presentationSource: PresentationSource) {
+    func modal() -> UIViewController {
         // View
         let viewController = RepositoriesViewController()
         
-        let (moduleViewController, modulePresentationSource) = repositoriesPresentation(for: viewController, title: title, style: presentationStyle)
+        // Presenter
+        let presenter = RepositoriesPresenter(view: viewController)
         
-        viewController.interactor = components.interactor(presenting: viewController)
-        viewController.router = components.router(presentingModulesIn: modulePresentationSource)
+        // Interactor
+        viewController.interactor = RepositoriesInteractor(presenter: presenter, github: github)
+        viewController.router = ModalRepositoriesRouter(presentingViewController: viewController, repositoryModule: repository)
         
-        presentationSource.present(moduleViewController)
+        return viewController
+    }
+    
+    func navigation(title: String) -> UIViewController {
+        // View
+        let viewController = RepositoriesViewController()
+        viewController.navigationItem.title = title
+        
+        let navigationController = UINavigationController(rootViewController: viewController)
+        
+        // Presenter
+        let presenter = RepositoriesPresenter(view: viewController)
+        
+        // Interactor
+        viewController.interactor = RepositoriesInteractor(presenter: presenter, github: github)
+        viewController.router = NavigationRepositoriesRouter(navigationController: navigationController, repositoryModule: repository)
+        
+        return navigationController
     }
     
 }

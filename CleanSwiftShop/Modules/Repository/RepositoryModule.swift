@@ -10,18 +10,38 @@ import UIKit
 
 struct RepositoryModule {
     
-    let components: RepositoryModuleComponents
-    
-    func present(_ repository: RepositoryListItem, in presentationSource: DismissablePresentationSource) {
+    func create(_ repository: RepositoryListItem, pushedTo navigationController: UINavigationController) -> UIViewController {
         // View
         let viewController = RepositoryViewController()
         
         // Connections
-        viewController.interactor = components.interactor(for: repository, presenting: viewController)
-        viewController.router = components.router(in: presentationSource)
+        viewController.interactor = interactor(for: repository, presenting: viewController)
+        viewController.router = RepositoryRouter(navigationController: navigationController)
         
         // View: Present
-        presentationSource.present(viewController)
+        return viewController
+    }
+    
+    func create(_ repository: RepositoryListItem, presentedIn presentingViewController: UIViewController) -> UIViewController {
+        // View
+        let viewController = RepositoryViewController()
+        
+        // Connections
+        viewController.interactor = interactor(for: repository, presenting: viewController)
+        viewController.router = RepositoryRouter(viewController: presentingViewController)
+        
+        // View: Present
+        return viewController
+    }
+    
+    private func interactor(for repository: RepositoryListItem, presenting view: RepositoryView) -> RepositoryInteractor {
+        // Presenter
+        let presenter = RepositoryPresenter(view: view)
+        
+        // Interactor
+        let interactor = RepositoryInteractor(repository: repository, presenter: presenter)
+        
+        return interactor
     }
     
 }

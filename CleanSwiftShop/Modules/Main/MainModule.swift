@@ -13,23 +13,28 @@ struct MainModule {
     
     let repositories: RepositoriesModule
     
-    func present(in presentationSource: PresentationSource) {
+    func create() -> UIViewController {
         // View
         let tabBarController = UITabBarController()
         
         // View: Tab: Repositories (Modal)
-        let modalTitle = "Repos (Modal)"
-        let modalImage = UIImage(systemName: "macwindow.on.rectangle")
-        let modalTab = UITabPresentationSource(tabBarController: tabBarController, title: modalTitle, image: modalImage)
-        repositories.present(.modal, title: modalTitle, in: modalTab)
+        addTab(for: repositories.modal(), in: tabBarController, title: "Repos (Modal)", image: UIImage(systemName: "macwindow.on.rectangle"))
         
         // View: Tab: Repositories (Navigation)
-        let navigationTitle = "Repos (Navigation)"
-        let navigationImage = UIImage(systemName: "arrow.right.doc.on.clipboard")
-        let navigationTab = UITabPresentationSource(tabBarController: tabBarController, title: navigationTitle, image: navigationImage)
-        repositories.present(.navigation, title: navigationTitle, in: navigationTab)
+        addTab(for: repositories.navigation(title: "Repositories"), in: tabBarController, title: "Repos (Navigation)", image: UIImage(systemName: "arrow.right.doc.on.clipboard"))
         
-        presentationSource.present(tabBarController)
+        return tabBarController
+    }
+    
+    private func addTab(for viewController: UIViewController, in tabBarController: UITabBarController, title: String, image: UIImage?) {
+        var viewControllers = tabBarController.viewControllers ?? []
+        
+        viewController.tabBarItem.title = title
+        viewController.tabBarItem.image = image
+        
+        viewControllers.append(viewController)
+        
+        tabBarController.viewControllers = viewControllers
     }
     
 }
