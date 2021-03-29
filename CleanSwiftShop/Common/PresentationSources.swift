@@ -59,11 +59,18 @@ struct Navigation {
     }
 }
 
+protocol TabBarPresentationDismisser {
+    func removeTab(for viewController: UIViewController)
+}
+
+protocol TabBarPresentationPresenter {
+    func addTab(_ tab: Tab, for viewController: UIViewController)
+}
+
 /**
  Presents a `UIViewController` + `Tab` as a tab in a tab bar
  */
-protocol TabBarPresentationSource {
-    func addTab(_ viewController: UIViewController, tab: Tab)
+protocol TabBarPresentationSource: TabBarPresentationPresenter, TabBarPresentationDismisser {
 }
 
 struct Tab {
@@ -130,7 +137,7 @@ struct UITabBarControllerPresentationSource: TabBarPresentationSource {
     
     let tabBarController: UITabBarController
     
-    func addTab(_ viewController: UIViewController, tab: Tab) {
+    func addTab(_ tab: Tab, for viewController: UIViewController) {
         viewController.tabBarItem.title = tab.title
         viewController.tabBarItem.image = tab.image
         
@@ -138,6 +145,11 @@ struct UITabBarControllerPresentationSource: TabBarPresentationSource {
         viewControllers.append(viewController)
         
         tabBarController.viewControllers = viewControllers
+    }
+    
+    func removeTab(for viewController: UIViewController) {
+        let viewControllers = tabBarController.viewControllers ?? []
+        tabBarController.viewControllers = viewControllers.filter { $0 != viewController }
     }
     
 }

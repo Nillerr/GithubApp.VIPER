@@ -39,7 +39,7 @@ struct RepositoriesModule {
         let imageSystemName = presentationStyle == .modal ? "macwindow.on.rectangle" : "arrow.right.doc.on.clipboard"
         let image = UIImage(systemName: imageSystemName)
         let tab = Tab(title: title, image: image)
-        presentationSource.addTab(moduleViewController, tab: tab)
+        presentationSource.addTab(tab, for: moduleViewController)
     }
     
 }
