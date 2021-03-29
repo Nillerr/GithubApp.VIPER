@@ -8,10 +8,6 @@
 import Foundation
 import UIKit
 
-protocol Presentable {
-    func present()
-}
-
 protocol PresentationSource {
     func present(_ viewController: UIViewController)
 }
